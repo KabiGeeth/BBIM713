@@ -307,7 +307,13 @@ def page_model():
     tabs = st.tabs(list(MODEL_COMPARISON))
     for tab, metric in zip(tabs, MODEL_COMPARISON):
         df = pd.DataFrame(MODEL_COMPARISON[metric], index=CATCHMENT_ORDER).T
-        tab.dataframe(df.style.format("{:.3f}", na_rep="n/a").background_gradient(cmap="Blues", axis=None), width="stretch")
+        z = df.astype(float).values
+        text = [["n/a" if np.isnan(v) else f"{v:.3f}" for v in row] for row in z]
+        fig = go.Figure(go.Heatmap(z=z, x=CATCHMENT_ORDER, y=list(df.index), text=text, texttemplate="%{text}",
+                                   colorscale="Blues", showscale=False, hoverinfo="skip", xgap=2, ygap=2))
+        fig.update_yaxes(autorange="reversed"); fig.update_xaxes(side="top")
+        fig.update_layout(height=330, margin=dict(l=10, r=10, t=10, b=10))
+        tab.plotly_chart(fig, width="stretch", theme="streamlit")
     st.caption("n/a: XGBoost was not evaluated on the test set for Mahurangi, and the GRU was not run for Wairau. "
                "The table comes from the team notebooks. The metrics above come from this dashboard\u2019s own Random Forest run on the same test periods, "
                "so the two can differ slightly (for example Swanson, where the notebook and dashboard data versions differ).")
