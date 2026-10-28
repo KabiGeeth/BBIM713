@@ -50,15 +50,35 @@ CATCHMENT_ORDER = ["Mahurangi", "Otara", "Puhinui", "Swanson", "Wairau"]
 
 
 # ----------------------------------------------------------------------------- data
+def find_file(name):
+    """Find a data file next to app.py, in a data/ folder, or anywhere below the app folder."""
+    here = Path(__file__).parent
+    for p in (here / "data" / name, here / name):
+        if p.exists():
+            return p
+    hits = sorted(here.rglob(name), key=lambda p: len(p.parts))
+    return hits[0] if hits else None
+
+
 @st.cache_data
 def load():
-    pred = pd.read_csv(DATA / "predictions.csv", parse_dates=["timestamp"])
+    pred_path, metrics_path = find_file("predictions.csv"), find_file("metrics.json")
+    if pred_path is None or metrics_path is None:
+        return None, None
+    pred = pd.read_csv(pred_path, parse_dates=["timestamp"])
     pred = pred.sort_values(["catchment", "timestamp"]).reset_index(drop=True)
-    metrics = json.loads((DATA / "metrics.json").read_text())
-    return pred, metrics
+    return pred, json.loads(metrics_path.read_text())
 
 
 pred_all, metrics_all = load()
+if pred_all is None:
+    here = Path(__file__).parent
+    st.error("The dashboard data files were not found: **predictions.csv** and **metrics.json** must be in the same "
+             "GitHub repository as app.py (in a folder called `data`, or next to app.py).")
+    st.write("Files the app can see in the repository:")
+    st.code("\n".join(sorted(str(p.relative_to(here)) for p in here.rglob("*")
+                              if p.is_file() and ".git" not in p.parts)[:60]) or "(none)")
+    st.stop()
 
 
 def catchment_frame(name):
