@@ -71,20 +71,21 @@ def person(name, role):
 
 
 # Test-set results from the team notebooks (all six models) - used only for the comparison table
+# Order of each list: Mahurangi, Otara, Puhinui, Swanson, Wairau
 MODEL_COMPARISON = {
     "F₂": {
         "Random Forest": [0.341, 0.345, 0.316, 0.314, 0.288],
-        "XGBoost":       [None, 0.339, 0.241, 0.318, 0.309],
+        "XGBoost":       [0.307, 0.339, 0.241, 0.325, 0.309],   # Mahurangi now evaluated; Swanson uses max-F2 threshold
         "Naive Bayes":   [0.333, 0.277, 0.305, 0.338, 0.331],
-        "KNN":           [0.318, 0.372, 0.321, 0.276, 0.315],
+        "KNN":           [0.318, 0.372, 0.318, 0.276, 0.315],   # Puhinui corrected to the notebook value
         "LSTM":          [0.362, 0.350, 0.340, 0.321, 0.314],
         "GRU":           [0.370, 0.338, 0.337, 0.301, None],
     },
     "ROC-AUC": {
         "Random Forest": [0.794, 0.773, 0.739, 0.830, 0.679],
-        "XGBoost":       [None, 0.764, 0.721, 0.811, 0.714],
+        "XGBoost":       [0.814, 0.764, 0.721, 0.811, 0.714],
         "Naive Bayes":   [0.792, 0.763, 0.726, 0.803, 0.731],
-        "KNN":           [0.775, 0.750, 0.731, 0.769, 0.684],
+        "KNN":           [0.775, 0.750, 0.704, 0.769, 0.684],   # Puhinui corrected to the notebook value
         "LSTM":          [0.814, 0.768, 0.725, 0.803, 0.733],
         "GRU":           [0.821, 0.768, 0.725, 0.799, None],
     },
@@ -575,7 +576,7 @@ def page_model():
         fig.update_yaxes(autorange="reversed"); fig.update_xaxes(side="top")
         fig.update_layout(height=330, margin=dict(l=10, r=10, t=10, b=10))
         tab.plotly_chart(fig, width="stretch", theme="streamlit")
-    st.caption("n/a: XGBoost was not evaluated on the test set for Mahurangi, and the GRU was not run for Wairau. "
+    st.caption("n/a: the GRU was not run for Wairau. "
                "The table comes from the team notebooks. The metrics above come from this dashboard\u2019s own LSTM run on the same test periods, "
                "so the two can differ slightly (the dashboard uses the inputs available in its data files for each catchment).")
 
