@@ -6,12 +6,12 @@ The Flood Managers · BBIM713 Capstone · Mahurangi, Otara, Puhinui, Swanson, Wa
     streamlit run app.py
 
 ## Pages
-1. **Risk monitor** – catchment + date/hour selector, Normal / High-water-risk status, current level or discharge, rainfall,
-   model risk score vs warning threshold, trend chart (level + threshold, actual vs predicted high-risk strips, rainfall, selected 24 h).
-2. **All catchments** – latest (or chosen-time) status of all five catchments side by side.
-3. **Model information** – selected model, precision / recall / F2 / PR-AUC / ROC-AUC, confusion matrix, events detected,
-   false-alert episodes, why the model was chosen, all six models' results from the team notebooks.
-4. **About & limitations** – what the status means and what the model cannot do.
+1. **Home** – project purpose, workflow, team members, supervisors and data parameters.
+2. **Upload your dataset** – upload a CSV or Excel file and train a session-only Random Forest using a chronological 70/15/15 split.
+3. **All catchments** – view the latest or selected-time status of all five catchments side by side.
+4. **Model information** – view the selected LSTM metrics, confusion matrix, event results and six-model comparison.
+5. **Risk monitor** – select a catchment and historical test-period time to view its high-water-risk status, water level, rainfall, model risk score and trend chart.
+6. **About & limitations** – explanation of the warning status, statistical high-water definition, limitations and future development.
 
 ## Wording rules (from the client brief)
 Use *Normal*, *High-water risk within the next 24 hours*, *Early warning*, *Model risk score*.
