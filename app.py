@@ -194,7 +194,7 @@ Auckland catchments. The project asks: <b>can historical sensor patterns give an
 level within the next 24 hours?</b><br><br>
 Six machine-learning models (Random Forest, XGBoost, Naive Bayes, KNN, LSTM and GRU) were trained and compared on a chronological
 70/15/15 split. High water is defined as the river reaching the <b>99.5th percentile of the training-period record</b>, a statistical
-proxy rather than an official flood level. The <b>LSTM is the selected model</b> used for the warnings on this dashboard. The warning threshold is tuned to favour catching events, so some false alarms are expected.
+proxy rather than an official flood level. The <b>LSTM was selected as the common dashboard model</b> because model performance was generally within a similar range across the catchments and it provided a consistent sequence-based approach. It was not the highest-scoring model in every catchment. The warning threshold is tuned to favour catching events, so some false alarms are expected.
 </div>""", unsafe_allow_html=True)
     with b:
         steps = [("#7b5ea7", "Upload your dataset", "Train and test a model on your own river and rainfall data."),
@@ -562,11 +562,14 @@ def page_model():
             f"- **{m['fn']:,}** high-water hours had no warning.\n"
             "- The threshold favours catching events, so false alarms are expected. Treat a warning as a prompt to check conditions.")
     st.markdown("##### Why this model")
-    st.info("The LSTM (long short-term memory network) is the selected model for all five catchments. It reads the previous 48 hours "
-            "of river and rainfall readings and outputs a risk score for the next 24 hours. In the team notebooks the six models score "
-            "very similarly (test F₂ 0.24–0.37), so the "
-            "differences between models are small. Only 13–31 high-water events exist per test period, so small differences between models should not be over-read.")
-    st.markdown("##### All six models, test results from the team notebooks")
+        st.info(
+        "LSTM was selected as the common operational model for all five catchments. "
+        "Although it was not the highest-scoring model in every catchment, its performance was competitive overall and it provided "
+        "a consistent sequence-based approach. The model uses the preceding 48 hours of available river and rainfall observations "
+        "to estimate high-water risk within the following 24 hours. Because the performance differences between models were generally "
+        "small and only 13–31 high-water events occurred in each test period, the results should not be interpreted as evidence that "
+        "LSTM universally outperforms every alternative."
+    )
     tabs = st.tabs(list(MODEL_COMPARISON))
     for tab, metric in zip(tabs, MODEL_COMPARISON):
         df = pd.DataFrame(MODEL_COMPARISON[metric], index=CATCHMENT_ORDER).T
