@@ -31,7 +31,6 @@ To use the team's own per-hour predictions instead, export a CSV with the same c
 - Puhinui high-water level is set to 0.865 m (value in the team's Puhinui notebook).
 - All five catchments use river water level (m) to define the high-water target.
 - Event definition: an event is a run of consecutive hours with high water ahead; an alert episode is a run of consecutive warning hours.
-- Selected model = Random Forest for all catchments (working default). Change `model` in `metrics.json` / update the text on the Model page if the team agrees a different rule.
-
+- Selected dashboard model: LSTM for all five catchments. LSTM was selected as a common deployment model because its performance was competitive across catchments and it provided a consistent sequence-based approach. It was not necessarily the highest-scoring model for every individual catchment.
 ## IMPORTANT – data
 `data/` contains AUT-supplied telemetry. Do NOT push it to a public GitHub repository; delete and return it to AUT at submission.
