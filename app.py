@@ -605,6 +605,7 @@ with the model risk score, the warning threshold, recent river and rainfall cond
 - The risk score is a ranking score, **not a calibrated probability**. Do not read 0.30 as "a 30% chance".
 - Warnings are tuned to catch events, so **many warnings are false alarms** (see Model information).
 - Results shown are a **replay of the held-out test period**, not live data. Only one lead time (24 h) is provided.
+- Few high-water events exist in each test period, so performance estimates are uncertain.
 - The six-model comparison combines results from separate team modelling branches. KNN used a separately prepared set of eligible observations, while LSTM and GRU used 48-hour sequences. The comparison is therefore suitable for broad benchmarking but not a strict row-for-row ranking.
 
 **Future development.** Live sensor integration, automated notifications, additional lead times (6 and 12 h), and a catchment map.
