@@ -115,8 +115,8 @@
   },
   "Wairau": {
     "model": "LSTM",
-    "river_variable": "Discharge",
-    "unit": "m\u00b3/s",
+    "river_variable": "Water level",
+    "unit": "m",
     "risk_threshold": 0.62024986743927,
     "high_water_level": 0.9259049999999989,
     "test_start": "2024-05-08 06:00:00",
