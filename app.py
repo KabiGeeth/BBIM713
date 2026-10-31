@@ -197,10 +197,11 @@ Six machine-learning models (Random Forest, XGBoost, Naive Bayes, KNN, LSTM and 
 proxy rather than an official flood level. The <b>LSTM is the selected model</b> used for the warnings on this dashboard. The warning threshold is tuned to favour catching events, so some false alarms are expected.
 </div>""", unsafe_allow_html=True)
     with b:
-        steps = [("#2a6f97", "Risk monitor", "Pick a catchment and time, see the 24 h status, risk score and trend."),
+        steps = [("#7b5ea7", "Upload your dataset", "Train and test a model on your own river and rainfall data."),
                  ("#2e7d32", "All catchments", "Compare the current status of all five at a glance."),
                  ("#e07a1f", "Model information", "Precision, recall, F₂, confusion matrix and model comparison."),
-                 ("#7b5ea7", "Upload your dataset", "Train and test a model on your own river and rainfall data.")]
+                 ("#2a6f97", "Risk monitor", "Pick a catchment and time, see the 24 h status, risk score and trend."),
+                 ("#6b7280", "About & limitations", "How to read the status and what the model cannot do.")]
         html = '<div class="card"><h3>🧭 App workflow</h3>' + "".join(
             f'<div class="step"><div class="num" style="background:{c}">{i}</div><div><div class="t">{t}</div>'
             f'<div class="d">{d}</div></div></div>' for i, (c, t, d) in enumerate(steps, 1)) + "</div>"
@@ -295,13 +296,13 @@ def run_upload(raw, time_col, river_col, rain_col):
 
 def page_upload():
     hero("Upload your dataset", "Train and test a high-water early-warning model on your own river and rainfall data.",
-         ["CSV or Excel", "Processed in your browser session only", "Nothing is stored"])
+         ["CSV or Excel", "Processed for this session only", "Nothing is stored"])
     st.markdown("""**What to upload:** one catchment, a record of hourly (or finer) readings with
 - a **timestamp** column,
 - a **river level or discharge** column,
 - optionally a **rainfall** column.
 
-A longer record is better (several years). The app uses the first 70 % of the time to train a quick Random Forest (a lightweight model that runs inside the app), the next 15 % to tune
+A longer record is better (several years). Missing river readings are interpolated across gaps of up to 6 hours; missing rainfall hours are treated as 0 mm, so long rainfall gaps will understate rainfall. The app uses the first 70 % of the time to train a quick Random Forest (a lightweight model that runs inside the app), the next 15 % to tune
 the warning threshold, and reports results on the final 15 %. High water is defined as the river reaching the **99.5th percentile of
 the training period**, and the model predicts whether that is reached **within the next 24 hours**.""")
     tpl = pd.DataFrame({"timestamp": pd.date_range("2020-01-01", periods=3, freq="h").astype(str),
