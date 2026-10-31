@@ -32,5 +32,7 @@ To use the team's own per-hour predictions instead, export a CSV with the same c
 - All five catchments use river water level (m) to define the high-water target.
 - Event definition: an event is a run of consecutive hours with high water ahead; an alert episode is a run of consecutive warning hours.
 - Selected dashboard model: LSTM for all five catchments. LSTM was selected as a common deployment model because its performance was competitive across catchments and it provided a consistent sequence-based approach. It was not necessarily the highest-scoring model for every individual catchment.
-## IMPORTANT – data
+- Model-comparison note: KNN used a separately prepared set of eligible observations, while LSTM and GRU used 48-hour sequences. The six-model results support broad benchmarking but are not a strict row-for-row comparison.
+
+## IMPORTANT - data
 `data/` contains AUT-supplied telemetry. Do NOT push it to a public GitHub repository; delete and return it to AUT at submission.
