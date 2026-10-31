@@ -29,7 +29,7 @@ To use the team's own per-hour predictions instead, export a CSV with the same c
 
 ## Notes
 - Puhinui high-water level is set to 0.865 m (value in the team's Puhinui notebook).
-- Wairau uses discharge (m³/s); the other four use water level (m).
+- All five catchments use river water level (m) to define the high-water target.
 - Event definition: an event is a run of consecutive hours with high water ahead; an alert episode is a run of consecutive warning hours.
 - Selected model = Random Forest for all catchments (working default). Change `model` in `metrics.json` / update the text on the Model page if the team agrees a different rule.
 
