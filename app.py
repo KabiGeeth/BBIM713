@@ -222,7 +222,7 @@ proxy rather than an official flood level. The <b>LSTM is the selected model</b>
     with st.expander("Catchments", expanded=True):
         st.markdown("Mahurangi · Otara · Puhinui · Swanson · Wairau")
     with st.expander("River measurements"):
-        st.markdown("- **Water level (m)** for Mahurangi, Otara, Puhinui and Swanson\n- **Discharge (m³/s)** for Wairau\n"
+        st.markdown("- **Water level (m)** for all five catchments\n"
                     "- **High-water threshold**: 99.5th percentile of the training-period record")
     with st.expander("Rainfall and engineered features"):
         st.markdown("- Hourly rainfall (mm) and rolling rainfall totals (3, 6, 12, 24, 48 h)\n"
@@ -518,8 +518,8 @@ def page_overview():
             <div style="font-size:.8rem;opacity:.75">{r.timestamp:%d %b %Y %H:00}</div></div>""", unsafe_allow_html=True)
     st.markdown("")
     st.dataframe(pd.DataFrame(rows).set_index("Catchment"), width="stretch")
-    st.caption("Status refers to the next 24 hours. Rivers are measured differently: Mahurangi, Otara, Puhinui and Swanson use "
-               "water level (m); Wairau uses discharge (m³/s). A catchment map is planned as future work.")
+    st.caption("Status refers to the next 24 hours. All five catchments are shown as river water level (m). "
+               "A catchment map is planned as future work.")
 
 
 # ============================================================================= PAGE 3
@@ -593,7 +593,7 @@ with the model risk score, the warning threshold, recent river and rainfall cond
 - ▲ **High-water risk**: an early warning. It means river and rainfall patterns resemble past hours that were followed by high water.
 
 **What "high water" means.** It is defined statistically as the river reaching the **99.5th percentile of the training-period record**
-(a water level in metres, or discharge in m³/s for Wairau). It is a proxy, not an official flood level or a confirmed flood.
+(a water level in metres). It is a proxy, not an official flood level or a confirmed flood.
 
 **Limitations.**
 - The model **classifies** risk; it does **not** forecast an exact future water level.
