@@ -561,16 +561,17 @@ def page_model():
             f"- **{m['tp']:,}** warning hours were followed by high water; **{m['fp']:,}** were false alarms.\n"
             f"- **{m['fn']:,}** high-water hours had no warning.\n"
             "- The threshold favours catching events, so false alarms are expected. Treat a warning as a prompt to check conditions.")
-    st.markdown("##### Why this model")
+        st.markdown("##### Why this model")
         st.info(
-        "LSTM was selected as the common operational model for all five catchments. "
-        "Although it was not the highest-scoring model in every catchment, its performance was competitive overall and it provided "
-        "a consistent sequence-based approach. The model uses the preceding 48 hours of available river and rainfall observations "
-        "to estimate high-water risk within the following 24 hours. Because the performance differences between models were generally "
-        "small and only 13–31 high-water events occurred in each test period, the results should not be interpreted as evidence that "
-        "LSTM universally outperforms every alternative."
-    )
-    tabs = st.tabs(list(MODEL_COMPARISON))
+            "LSTM was selected as the common operational model for all five catchments. "
+            "Although it was not the highest-scoring model in every catchment, its performance was competitive overall and it provided "
+            "a consistent sequence-based approach. The model uses the preceding 48 hours of available river and rainfall observations "
+            "to estimate high-water risk within the following 24 hours. Because the performance differences between models were generally "
+            "small and only 13–31 high-water events occurred in each test period, the results should not be interpreted as evidence that "
+            "LSTM universally outperforms every alternative."
+        )
+        st.markdown("##### All six models, test results from the team notebooks")
+        tabs = st.tabs(list(MODEL_COMPARISON))
     for tab, metric in zip(tabs, MODEL_COMPARISON):
         df = pd.DataFrame(MODEL_COMPARISON[metric], index=CATCHMENT_ORDER).T
         z = df.astype(float).values
