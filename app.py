@@ -561,7 +561,7 @@ def page_model():
             f"- **{m['tp']:,}** warning hours were followed by high water; **{m['fp']:,}** were false alarms.\n"
             f"- **{m['fn']:,}** high-water hours had no warning.\n"
             "- The threshold favours catching events, so false alarms are expected. Treat a warning as a prompt to check conditions.")
-         st.markdown("##### Why this model")
+    st.markdown("##### Why this model")
     st.info(
         "LSTM was selected as the common operational model for all five catchments. "
         "Although it was not the highest-scoring model in every catchment, its performance was competitive overall and it provided "
