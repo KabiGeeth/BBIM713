@@ -256,42 +256,149 @@ def build_features(df):
 @st.cache_data(show_spinner=False)
 def run_upload(raw, time_col, river_col, rain_col):
     from sklearn.ensemble import RandomForestClassifier
-    from sklearn.metrics import (average_precision_score, confusion_matrix, fbeta_score, precision_score,
-                                 recall_score, roc_auc_score)
-    df = pd.DataFrame({"t": pd.to_datetime(raw[time_col], errors="coerce"),
-                       "river": pd.to_numeric(raw[river_col], errors="coerce"),
-                       "rain": pd.to_numeric(raw[rain_col], errors="coerce") if rain_col else 0.0})
+    from sklearn.metrics import (
+        average_precision_score,
+        confusion_matrix,
+        fbeta_score,
+        precision_score,
+        recall_score,
+        roc_auc_score,
+    )
+
+    df = pd.DataFrame({
+        "t": pd.to_datetime(raw[time_col], errors="coerce"),
+        "river": pd.to_numeric(raw[river_col], errors="coerce"),
+        "rain": pd.to_numeric(raw[rain_col], errors="coerce") if rain_col else 0.0,
+    })
+
     df = df.dropna(subset=["t"]).sort_values("t")
-    df = df.set_index("t").resample("1h").agg({"river": "mean", "rain": "sum"})
-    df["river"] = df.river.interpolate(limit=6)
-    df["rain"] = df.rain.fillna(0.0)
+    df = df.set_index("t").resample("1h").agg({
+        "river": "mean",
+        "rain": "sum",
+    })
+    df["river"] = df["river"].interpolate(limit=6)
+    df["rain"] = df["rain"].fillna(0.0)
     df = df.dropna(subset=["river"])
-    X, fmax = build_features(df)
-    ok = X.notna().all(axis=1) & fmax.notna()
-    X, fmax, riv = X[ok], fmax[ok], df.river[ok]
-    n = len(X); i1, i2 = int(n * .70), int(n * .85)
-    thr_level = float(riv.iloc[:i1].quantile(0.995))
-    y = (fmax >= thr_level).astype(int)
-    if y.iloc[:i1].sum() < 5 or y.iloc[i1:i2].sum() < 2 or y.iloc[i2:].sum() < 2:
-        return {"error": "Too few high-water hours in the training, validation or test period to build a model. "
-                         "Upload a longer record (several years of hourly data is best)."}
-    rf = RandomForestClassifier(n_estimators=150, max_features="sqrt", min_samples_leaf=2,
-                                class_weight="balanced_subsample", random_state=42, n_jobs=-1)
-    rf.fit(X.iloc[:i1], y.iloc[:i1])
-    score = pd.Series(rf.predict_proba(X)[:, 1], index=X.index)
-    grid = np.linspace(0.02, 0.9, 89)
-    f2 = [fbeta_score(y.iloc[i1:i2], score.iloc[i1:i2] >= g, beta=2, zero_division=0) for g in grid]
-    thr = float(grid[int(np.argmax(f2))])
-    te = slice(i2, None); yt = y.iloc[te]; pt = (score.iloc[te] >= thr).astype(int)
-    tn, fp, fn, tp = confusion_matrix(yt, pt, labels=[0, 1]).ravel()
-    out = pd.DataFrame({"timestamp": X.index[te], "river_value": riv.iloc[te].values, "rainfall_mm": df.rain.loc[X.index[te]].values,
-                        "risk_score": score.iloc[te].values, "alert": pt.values, "actual_next24h": yt.values})
-    imp = pd.Series(rf.feature_importances_, index=X.columns).sort_values(ascending=False).head(8)
-    return {"pred": out, "level": thr_level, "thr": thr, "rows": n, "start": X.index[0], "end": X.index[-1],
-            "train": (X.index[0], X.index[i1 - 1]), "test": (X.index[i2], X.index[-1]),
-            "precision": precision_score(yt, pt, zero_division=0), "recall": recall_score(yt, pt, zero_division=0),
-            "f2": fbeta_score(yt, pt, beta=2, zero_division=0), "roc": roc_auc_score(yt, out.risk_score),
-            "pr": average_precision_score(yt, out.risk_score), "cm": (tn, fp, fn, tp), "imp": imp}
+
+    # Split chronologically before creating the next-24-hour target.
+    n_raw = len(df)
+    cut1 = int(n_raw * 0.70)
+    cut2 = int(n_raw * 0.85)
+
+    train_df = df.iloc[:cut1].copy()
+    validation_df = df.iloc[cut1:cut2].copy()
+    test_df = df.iloc[cut2:].copy()
+
+    def prepare_period(period):
+        X_period, future_max = build_features(period)
+        valid = X_period.notna().all(axis=1) & future_max.notna()
+
+        return (
+            X_period.loc[valid],
+            future_max.loc[valid],
+            period.loc[valid, "river"],
+        )
+
+    X_train, future_train, river_train = prepare_period(train_df)
+    X_validation, future_validation, river_validation = prepare_period(validation_df)
+    X_test, future_test, river_test = prepare_period(test_df)
+
+    if min(len(X_train), len(X_validation), len(X_test)) == 0:
+        return {
+            "error": "The training, validation or test period does not contain enough complete hourly observations."
+        }
+
+    high_water_threshold = float(train_df["river"].quantile(0.995))
+
+    y_train = (future_train >= high_water_threshold).astype(int)
+    y_validation = (future_validation >= high_water_threshold).astype(int)
+    y_test = (future_test >= high_water_threshold).astype(int)
+
+    if y_train.sum() < 5 or y_validation.sum() < 2 or y_test.sum() < 2:
+        return {
+            "error": "Too few high-water hours in the training, validation or test period to build a model. "
+                     "Upload a longer record (several years of hourly data is best)."
+        }
+
+    model = RandomForestClassifier(
+        n_estimators=150,
+        max_features="sqrt",
+        min_samples_leaf=2,
+        class_weight="balanced_subsample",
+        random_state=42,
+        n_jobs=-1,
+    )
+    model.fit(X_train, y_train)
+
+    validation_score = pd.Series(
+        model.predict_proba(X_validation)[:, 1],
+        index=X_validation.index,
+    )
+    test_score = pd.Series(
+        model.predict_proba(X_test)[:, 1],
+        index=X_test.index,
+    )
+
+    threshold_grid = np.linspace(0.02, 0.9, 89)
+    validation_f2 = [
+        fbeta_score(
+            y_validation,
+            validation_score >= threshold,
+            beta=2,
+            zero_division=0,
+        )
+        for threshold in threshold_grid
+    ]
+    warning_threshold = float(
+        threshold_grid[int(np.argmax(validation_f2))]
+    )
+
+    test_prediction = (test_score >= warning_threshold).astype(int)
+    tn, fp, fn, tp = confusion_matrix(
+        y_test,
+        test_prediction,
+        labels=[0, 1],
+    ).ravel()
+
+    output = pd.DataFrame({
+        "timestamp": X_test.index,
+        "river_value": river_test.values,
+        "rainfall_mm": test_df.loc[X_test.index, "rain"].values,
+        "risk_score": test_score.values,
+        "alert": test_prediction.values,
+        "actual_next24h": y_test.values,
+    })
+
+    importance = pd.Series(
+        model.feature_importances_,
+        index=X_train.columns,
+    ).sort_values(ascending=False).head(8)
+
+    total_rows = len(X_train) + len(X_validation) + len(X_test)
+
+    return {
+        "pred": output,
+        "level": high_water_threshold,
+        "thr": warning_threshold,
+        "rows": total_rows,
+        "start": X_train.index[0],
+        "end": X_test.index[-1],
+        "train": (X_train.index[0], X_train.index[-1]),
+        "test": (X_test.index[0], X_test.index[-1]),
+        "precision": precision_score(
+            y_test, test_prediction, zero_division=0
+        ),
+        "recall": recall_score(
+            y_test, test_prediction, zero_division=0
+        ),
+        "f2": fbeta_score(
+            y_test, test_prediction, beta=2, zero_division=0
+        ),
+        "roc": roc_auc_score(y_test, test_score),
+        "pr": average_precision_score(y_test, test_score),
+        "cm": (tn, fp, fn, tp),
+        "imp": importance,
+    }
 
 
 def page_upload():
