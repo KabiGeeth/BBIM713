@@ -34,5 +34,5 @@ To use the team's own per-hour predictions instead, export a CSV with the same c
 - Selected dashboard model: LSTM for all five catchments. LSTM was selected as a common deployment model because its performance was competitive across catchments and it provided a consistent sequence-based approach. It was not necessarily the highest-scoring model for every individual catchment.
 - Model-comparison note: KNN used a separately prepared set of eligible observations, while LSTM and GRU used 48-hour sequences. The six-model results support broad benchmarking but are not a strict row-for-row comparison.
 
-## IMPORTANT - data
-`data/` contains AUT-supplied telemetry. Do NOT push it to a public GitHub repository; delete and return it to AUT at submission.
+## Data access
+`data/` contains AUT-supplied telemetry. AUT granted permission for these project data files to remain publicly accessible until the end of the project. After project completion, the team will remove or restrict the files in accordance with AUT's instructions.
