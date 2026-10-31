@@ -567,7 +567,7 @@ def page_model():
         "Although it was not the highest-scoring model in every catchment, its performance was competitive overall and it provided "
         "a consistent sequence-based approach. The model uses the preceding 48 hours of available river and rainfall observations "
         "to estimate high-water risk within the following 24 hours. Because the performance differences between models were generally "
-        "small and only 13–31 high-water events occurred in each test period, the results should not be interpreted as evidence that "
+        "small and only 13-31 high-water events occurred in each test period, the results should not be interpreted as evidence that "
         "LSTM universally outperforms every alternative."
     )
     st.markdown("##### All six models, test results from the team notebooks")
