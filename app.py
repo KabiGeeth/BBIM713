@@ -308,7 +308,7 @@ the training period**, and the model predicts whether that is reached **within t
     tpl = pd.DataFrame({"timestamp": pd.date_range("2020-01-01", periods=3, freq="h").astype(str),
                         "river_level_m": [1.20, 1.22, 1.25], "rainfall_mm": [0.0, 0.4, 1.2]})
     st.download_button("⬇ Download CSV template", tpl.to_csv(index=False), "template.csv", "text/csv")
-    up = st.file_uploader("Upload CSV or Excel file (max 200 MB)", type=["csv", "xlsx", "xls"])
+    up = st.file_uploader("Upload CSV or Excel file (max 200 MB)", type=["csv", "xlsx"])
     if up is None:
         st.info("No dataset uploaded yet. The files you upload are read in memory for this session and are not saved by the app.")
         return
