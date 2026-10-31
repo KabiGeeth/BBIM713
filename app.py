@@ -3,7 +3,7 @@ Catchment High-Water Early Warning dashboard (24-hour lead time)
 The Flood Managers - BBIM713 Capstone
 
 Run:  streamlit run app.py
-Reads: data/predictions.csv and data/metrics.json  (created by prepare_data.py)
+Reads: predictions.csv and metrics.json  (created by build_dashboard_data.py from the LSTM notebooks' saved test predictions)
 
 Wording rule: the model predicts a percentile-defined HIGH-WATER RISK within the next 24 hours.
 It does not forecast an exact water level and does not confirm a flood.
@@ -133,7 +133,8 @@ if pred_all is None:
 
 def catchment_frame(name):
     d = pred_all[pred_all.catchment == name].reset_index(drop=True)
-    d["rain_24h"] = d["rainfall_mm"].rolling(24, min_periods=1).sum()
+    # Sum the rainfall in the previous 24 clock hours (rows can skip hours where the LSTM had no prediction)
+    d["rain_24h"] = d.set_index("timestamp")["rainfall_mm"].rolling("24h").sum().values
     return d
 
 
