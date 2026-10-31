@@ -75,9 +75,9 @@ def person(name, role):
 MODEL_COMPARISON = {
     "F₂": {
         "Random Forest": [0.341, 0.345, 0.316, 0.314, 0.288],
-        "XGBoost":       [0.307, 0.339, 0.241, 0.325, 0.309],   # Mahurangi now evaluated; Swanson uses max-F2 threshold
+        "XGBoost":       [0.307, 0.339, 0.241, 0.325, 0.309],   
         "Naive Bayes":   [0.333, 0.277, 0.305, 0.338, 0.331],
-        "KNN":           [0.318, 0.372, 0.318, 0.276, 0.315],   # Puhinui corrected to the notebook value
+        "KNN":           [0.318, 0.372, 0.318, 0.276, 0.315],  
         "LSTM":          [0.362, 0.350, 0.340, 0.321, 0.314],
         "GRU":           [0.370, 0.338, 0.337, 0.301, None],
     },
@@ -85,7 +85,7 @@ MODEL_COMPARISON = {
         "Random Forest": [0.794, 0.773, 0.739, 0.830, 0.679],
         "XGBoost":       [0.814, 0.764, 0.721, 0.811, 0.714],
         "Naive Bayes":   [0.792, 0.763, 0.726, 0.803, 0.731],
-        "KNN":           [0.775, 0.750, 0.704, 0.769, 0.684],   # Puhinui corrected to the notebook value
+        "KNN":           [0.775, 0.750, 0.704, 0.769, 0.684],   
         "LSTM":          [0.814, 0.768, 0.725, 0.803, 0.733],
         "GRU":           [0.821, 0.768, 0.725, 0.799, None],
     },
@@ -179,7 +179,7 @@ st.sidebar.caption("Capstone project · NZSE · 2026")
 def page_home():
     hero("Water Catchment Flood-Risk Prediction and Decision Support",
          "An early-warning dashboard that flags high-water risk within the next 24 hours for five Auckland catchments.",
-         ["BBIM713 Capstone Project", "NZSE", "Mahurangi · Otara · Puhinui · Swanson · Wairau"])
+         ["BBIM713 Capstone Project", "NZSE", "AUT", "Mahurangi · Otara · Puhinui · Swanson · Wairau"])
     s1, s2, s3, s4 = st.columns(4)
     for c, v, l in zip((s1, s2, s3, s4), ("5", "24 h", "6", "2015–2025"),
                        ("Auckland catchments", "Warning lead time", "Models compared", "Telemetry period")):
