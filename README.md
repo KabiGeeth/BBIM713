@@ -1,6 +1,11 @@
 # Catchment High-Water Early Warning dashboard (24-hour lead time)
 The Flood Managers · BBIM713 Capstone · Mahurangi, Otara, Puhinui, Swanson, Wairau
 
+
+## Project links
+- **Team portfolio:** https://aucklandfloodprediction.wordpress.com/
+- **Live dashboard:** https://the-flood-managers-dashboard.streamlit.app/
+
 ## Run it
     pip install -r requirements.txt
     streamlit run app.py
