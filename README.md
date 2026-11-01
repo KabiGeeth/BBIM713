@@ -19,13 +19,14 @@ Never say "confirmed flood", "a flood will occur" or "exact forecast". The model
 condition; it does not predict an exact future water level, and the risk score is not a calibrated probability.
 
 ## Data files (the app reads only these two)
-- `data/predictions.csv` – one row per hour of the held-out TEST period:
+- `predictions.csv` – one row per hour of the held-out TEST period for each catchment:
   `catchment, timestamp, river_variable, river_value, rainfall_mm, risk_score, alert, actual_next24h`
-- `data/metrics.json` – per-catchment threshold, test metrics, confusion matrix, event counts.
+- `metrics.json` – per-catchment LSTM warning threshold, test metrics, confusion matrix, event and alert-episode counts.
 
-`prepare_data.py` rebuilds both from the team's modelling CSVs (Random Forest, F2 threshold tuned on validation, test used once).
-To use the team's own per-hour predictions instead, export a CSV with the same columns and replace `data/predictions.csv`
-(then update `data/metrics.json`).
+Both files are created by `build_dashboard_data.py` from the test predictions saved by the LSTM notebooks
+(`<catchment>_lstm_test_predictions.csv`), plus the cleaned hourly data each LSTM notebook used (for the
+river level and rainfall shown on the charts). Nothing is retrained: the dashboard metrics match the LSTM notebooks.
+To rebuild: put the input files next to the script and run `python build_dashboard_data.py`.
 
 ## Notes
 - Puhinui high-water level is set to 0.865 m (value in the team's Puhinui notebook).
@@ -35,4 +36,4 @@ To use the team's own per-hour predictions instead, export a CSV with the same c
 - Model-comparison note: KNN used a separately prepared set of eligible observations, while LSTM and GRU used 48-hour sequences. The six-model results support broad benchmarking but are not a strict row-for-row comparison.
 
 ## Data access
-`data/` contains AUT-supplied telemetry. AUT granted permission for these project data files to remain publicly accessible until the end of the project. After project completion, the team will remove or restrict the files in accordance with AUT's instructions.
+`predictions.csv` and `metrics.json` contain AUT-supplied telemetry. AUT granted permission for these project data files to remain publicly accessible until the end of the project. After project completion, the team will remove or restrict the files in accordance with AUT's instructions.
