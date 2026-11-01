@@ -689,9 +689,9 @@ def page_model():
         fig.update_yaxes(autorange="reversed"); fig.update_xaxes(side="top")
         fig.update_layout(height=330, margin=dict(l=10, r=10, t=10, b=10))
         tab.plotly_chart(fig, width="stretch", theme="streamlit")
-    st.caption("n/a: the GRU was not run for Wairau. "
-               "The table comes from the team notebooks. The metrics above come from this dashboard\u2019s own LSTM run on the same test periods, "
-               "so the two can differ slightly (the dashboard uses the inputs available in its data files for each catchment).")
+    st.caption("n/a: the GRU was not run for Wairau. The table comes from the team notebooks. "
+               "The metrics above are calculated from the LSTM notebooks' own test predictions "
+               "(see build_dashboard_data.py), so they match the LSTM row of the table.")
 
 
 # ============================================================================= PAGE 4
