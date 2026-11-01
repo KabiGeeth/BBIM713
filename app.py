@@ -8,6 +8,7 @@ Reads: predictions.csv and metrics.json  (created by build_dashboard_data.py fro
 Wording rule: the model predicts a percentile-defined HIGH-WATER RISK within the next 24 hours.
 It does not forecast an exact water level and does not confirm a flood.
 """
+import base64
 import json
 from datetime import time
 from pathlib import Path
@@ -60,9 +61,25 @@ CSS = """
 st.markdown(CSS, unsafe_allow_html=True)
 
 
-def hero(title, subtitle, tags=()):
+def logo_html(path, height=56):
+    """Return an <img> tag with the logo embedded, or "" if the file is missing (the page still works)."""
+    p = Path(__file__).parent / path
+    if not p.exists():
+        return ""
+    b64 = base64.b64encode(p.read_bytes()).decode()
+    return (f'<img src="data:image/png;base64,{b64}" alt="{p.stem}" '
+            f'style="height:{height}px;border-radius:8px">')
+
+
+def hero(title, subtitle, tags=(), logos=()):
     chips = "".join(f'<span class="tag">{t}</span>' for t in tags)
-    st.markdown(f'<div class="hero"><h1>{title}</h1><p>{subtitle}</p>{chips}</div>', unsafe_allow_html=True)
+    imgs = "".join(logo_html(p) for p in logos)
+    # Logos sit on the right of the banner; on narrow screens they wrap underneath the text
+    logo_block = f'<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">{imgs}</div>' if imgs else ""
+    st.markdown(
+        f'<div class="hero"><div style="display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap">'
+        f'<div style="flex:1;min-width:280px"><h1>{title}</h1><p>{subtitle}</p>{chips}</div>{logo_block}</div></div>',
+        unsafe_allow_html=True)
 
 
 def person(name, role):
@@ -180,7 +197,8 @@ st.sidebar.caption("Capstone project · NZSE · 2026")
 def page_home():
     hero("Water Catchment Flood-Risk Prediction and Decision Support",
          "An early-warning dashboard that flags high-water risk within the next 24 hours for five Auckland catchments.",
-         ["BBIM713 Capstone Project", "NZSE", "AUT", "Mahurangi · Otara · Puhinui · Swanson · Wairau"])
+         ["BBIM713 Capstone Project", "NZSE", "AUT", "Mahurangi · Otara · Puhinui · Swanson · Wairau"],
+         logos=("asset/nzse_logo.png", "asset/aut_logo.png"))
     s1, s2, s3, s4 = st.columns(4)
     for c, v, l in zip((s1, s2, s3, s4), ("5", "24 h", "6", "2015–2025"),
                        ("Auckland catchments", "Warning lead time", "Models compared", "Telemetry period")):
