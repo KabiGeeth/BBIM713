@@ -240,7 +240,16 @@ proxy rather than an official flood level. The <b>LSTM was selected as the commo
     st.markdown("### 📚 Data parameters")
     st.caption("Click to expand each parameter group.")
     with st.expander("Catchments", expanded=True):
-        st.markdown("Mahurangi · Otara · Puhinui · Swanson · Wairau")
+        st.markdown(
+            "| Catchment | Rainfall station | River station (water level) |\n"
+            "|---|---|---|\n"
+            "| Mahurangi | 644616 · Mahurangi @ Satellite Dish | 6863 · Mahurangi Argonaut @ College |\n"
+            "| Otara | 649940 · Manukau @ Sports Bowl | 8208 · Otara @ Hills Road Bridge |\n"
+            "| Puhinui | 740945 · Puhinui at Botanical Gardens | 43807 · Puhinui @ Drop Structure |\n"
+            "| Swanson | 648513 · Swanson @ Waitakere Filter Station | 7907 · Swanson Stream @ Woodside Reserve |\n"
+            "| Wairau | 647722 · Wairau at Testing Station | 7604 · Wairau Creek @ Motorway |\n\n"
+            "Primary stations from the client's station inventory. Gaps were filled from nearby support gauges "
+            "where available (e.g. 644626 for Mahurangi rainfall, 740815 for earlier Puhinui rainfall).")
     with st.expander("River measurements"):
         st.markdown("- **Water level (m)** for all five catchments\n"
                     "- **High-water threshold**: 99.5th percentile of the training-period record")
