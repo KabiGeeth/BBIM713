@@ -437,7 +437,7 @@ def page_upload():
 - a **river level or discharge** column,
 - optionally a **rainfall** column.
 
-A longer record is better (several years). Missing river readings are interpolated across gaps of up to 6 hours; missing rainfall hours are treated as 0 mm, so long rainfall gaps will understate rainfall. The app uses the first 70 % of the time to train a quick Random Forest (a lightweight model that runs inside the app), the next 15 % to tune
+A longer record is better (several years). Missing river readings are interpolated across gaps of up to 6 hours; missing rainfall hours are treated as 0 mm, so long rainfall gaps will understate rainfall. The app uses the first 70 % of the time to train a quick Random Forest (one of our six tested models; our main LSTM takes too long to train live inside the app, so the other pages show LSTM results from our notebooks), the next 15 % to tune
 the warning threshold, and reports results on the final 15 %. High water is defined as the river reaching the **99.5th percentile of
 the training period**, and the model predicts whether that is reached **within the next 24 hours**.""")
     tpl = pd.DataFrame({"timestamp": pd.date_range("2020-01-01", periods=3, freq="h").astype(str),
